@@ -1,0 +1,229 @@
+1. 
+import cv2 as cv
+from matplotlib import pyplot as plt
+
+
+# Function to apply Sobel edge detection
+def sobel_edges(img):
+    # Convert the image to grayscale
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+
+    # Apply Gaussian blur
+    blur_img = cv.GaussianBlur(gray, (5, 5), 0)
+
+    # Apply Sobel operator
+    sobelx = cv.Sobel(src=blur_img, ddepth=cv.CV_64F, dx=1, dy=0, ksize=5)
+    filtered_image_x = cv.convertScaleAbs(sobelx)
+
+    sobely = cv.Sobel(src=blur_img, ddepth=cv.CV_64F, dx=0, dy=1, ksize=5)
+    filtered_image_y = cv.convertScaleAbs(sobely)
+
+    sobelxy = cv.Sobel(src=blur_img, ddepth=cv.CV_64F, dx=1, dy=1, ksize=5)
+    filtered_image_xy = cv.convertScaleAbs(sobelxy)
+
+    return filtered_image_x, filtered_image_y, filtered_image_xy
+
+
+# set figure size
+plt.figure(figsize=(20, 20))
+
+# Capture video from the device camera
+cap = cv.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Apply Sobel edge detection
+    sobel_x, sobel_y, sobel_xy = sobel_edges(frame)
+
+    # Display original image, Sobel X, Sobel Y, and Sobel XY edges
+    plt.subplot(221)
+    plt.imshow(cv.cvtColor(frame, cv.COLOR_BGR2RGB))
+    plt.title('Original Image')
+    plt.axis("off")
+
+    plt.subplot(222)
+    plt.imshow(sobel_x, cmap='gray')
+    plt.title('Sobel X')
+    plt.axis("off")
+
+    plt.subplot(223)
+    plt.imshow(sobel_y, cmap='gray')
+    plt.title('Sobel Y')
+    plt.axis("off")
+
+    plt.subplot(224)
+    plt.imshow(sobel_xy, cmap='gray')
+    plt.title('Sobel XY')
+    plt.axis("off")
+
+    plt.show()
+
+    # Close the plot window when 'q' is pressed
+    if cv.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release video capture object and close all windows
+cap.release()
+cv.destroyAllWindows()
+
+==============================================================
+
+2. 
+import cv2 as cv
+from matplotlib import pyplot as plt
+
+# Function to apply Canny edge detection
+def canny_edges(img):
+    edges = cv.Canny(img, 100, 200)
+    return edges
+
+# set figure size
+plt.figure(figsize=(20, 10))
+
+# Capture video from the device camera
+cap = cv.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Apply Canny edge detection
+    canny_img = canny_edges(frame)
+
+    # Display original image and Canny edges
+    plt.subplot(121)
+    plt.imshow(cv.cvtColor(frame, cv.COLOR_BGR2RGB))
+    plt.title('Original Image')
+    plt.axis("off")
+
+    plt.subplot(122)
+    plt.imshow(canny_img, cmap='gray')
+    plt.title('Canny Edges')
+    plt.axis("off")
+
+    plt.show()
+
+    # Close the plot window when 'q' is pressed
+    if cv.waitKey(0) & 0xFF == ord('q'):
+        break
+
+# Release video capture object and close all windows
+cap.release()
+cv.destroyAllWindows()
+
+==============================================================
+
+3. 
+import cv2 as cv
+from matplotlib import pyplot as plt
+
+# Function to apply Laplacian edge detection
+def laplacian_edges(img):
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    laplacian = cv.Laplacian(gray, cv.CV_64F)
+    laplacian = cv.convertScaleAbs(laplacian)
+    return laplacian
+
+# set figure size
+plt.figure(figsize=(20, 10))
+
+# Capture video from the device camera
+cap = cv.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Apply Laplacian edge detection
+    laplacian_img = laplacian_edges(frame)
+
+    # Display original image and Laplacian edges
+    plt.subplot(121)
+    plt.imshow(cv.cvtColor(frame, cv.COLOR_BGR2RGB))
+    plt.title('Original Image')
+    plt.axis("off")
+
+    plt.subplot(122)
+    plt.imshow(laplacian_img, cmap='gray')
+    plt.title('Laplacian Edges')
+    plt.axis("off")
+
+    plt.show()
+
+    # Close the plot window when 'q' is pressed
+    if cv.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release video capture object and close all windows
+cap.release()
+cv.destroyAllWindows()
+
+==============================================================
+
+4.
+import cv2
+import matplotlib.pyplot as plt
+
+def sobel_edges(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    sobel_xy = cv2.Sobel(gray, cv2.CV_64F, 1, 1, ksize=3)
+    sobel_xy = cv2.convertScaleAbs(sobel_xy)
+    return sobel_xy
+
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("Error: Unable to open the camera.")
+    exit()
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    sobel_xy = sobel_edges(frame)
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    canny = cv2.Canny(gray, 100, 200)
+    laplacian = cv2.Laplacian(gray, cv2.CV_64F)
+    laplacian = cv2.convertScaleAbs(laplacian)
+
+    sobel_xy = cv2.convertScaleAbs(sobel_xy, alpha=1.5, beta=50)
+    laplacian = cv2.convertScaleAbs(laplacian, alpha=1.5, beta=50)
+
+    cv2.putText(frame, 'Original', (20, 30), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 255), 2)
+    cv2.putText(sobel_xy, 'SobelXY', (20, 30), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 255), 2)
+    cv2.putText(canny, 'Canny', (20, 30), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 255), 2)
+    cv2.putText(laplacian, 'Laplacian', (20, 30), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 255), 2)
+
+    plt.clf()
+
+    plt.subplot(221)
+    plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+    plt.axis("off")
+
+    plt.subplot(222)
+    plt.imshow(sobel_xy, cmap='gray')
+    plt.axis("off")
+
+    plt.subplot(223)
+    plt.imshow(canny, cmap='gray')
+    plt.axis("off")
+
+    plt.subplot(224)
+    plt.imshow(laplacian, cmap='gray')
+    plt.axis("off")
+
+    plt.pause(0.1)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release everything if job is finished
+cap.release()
+cv2.destroyAllWindows()
